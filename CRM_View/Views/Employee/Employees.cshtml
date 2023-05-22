@@ -1,0 +1,305 @@
+﻿
+@{
+    ViewData["Title"] = "Employees";
+}
+
+@*<link href="../../css/bootstrap.min.css" rel="stylesheet" />*@
+
+<style>
+    .alignLeft {
+        text-align: left;
+    }
+</style>
+<h1>Employees</h1>
+
+<div class="row">
+    <div class="row col-md-12">
+        <div class="col-md-6">
+            <label style="font-size: large;font-weight: bold;">First Name</label>
+            <input id="FirstName" type="text" class="form-control form-control-lg" />
+        </div>
+        <div class="col-md-6">
+            <label style="font-size: large;font-weight: bold;">Last Name</label>
+            <input id="LastName" type="text" class="form-control form-control-lg" />
+        </div>
+    </div>
+    <div class="row col-md-12">
+        <div class="col-md-6">
+            <label style="font-size: large;font-weight: bold;">Date Of Birth</label>
+            <input id="DateOfBirth" type="date" class="form-control form-control-lg" />
+        </div>
+        <div class="col-md-6">
+            <label style="font-size: large;font-weight: bold;">Email</label>
+            <input id="Email" type="email" class="form-control form-control-lg" />
+        </div>
+    </div>
+    <div class="row col-md-12">
+        <div class="col-md-12">
+            <label style="font-size: large;font-weight: bold;">Address</label>
+            <textarea id="Address" class="form-control form-control-lg"></textarea>
+        </div>
+    </div>
+    <div class="row col-md-12">
+        <div class="col-md-6">
+            <label style="font-size: large;font-weight: bold;">Phone Number</label>
+            <input id="PhoneNumber" type="number" class="form-control form-control-lg" />
+        </div>
+        <div class="col-md-6">
+            <label style="font-size: large;font-weight: bold;">City</label>
+            <input id="City" type="text" class="form-control form-control-lg" />
+        </div>
+    </div>
+    <div class="row col-md-12">
+        <div class="col-md-6">
+            <label style="font-size: large;font-weight: bold;">Province</label>
+            <input id="Province" type="text" class="form-control form-control-lg" />
+        </div>
+        <div class="col-md-6">
+            <label style="font-size: large;font-weight: bold;">Zip Code</label>
+            <input id="ZipCode" type="number" class="form-control form-control-lg" />
+        </div>
+    </div>
+    <div class="row col-md-12" style="justify-content: right;">
+        <div class="d-flex justify-content-end pt-3 ">
+            <button type="button" id="btnSave" class="btn btn-warning btn-lg ms-2" onclick="addEdit()">Save</button>
+            <button type="reset" id="btnReset" class="btn btn-light btn-lg" onclick="Reset()">Clear</button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered" id="GetAllData">
+        <thead>
+            <tr>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>DateOfBirth</th>
+                <th>Email</th>
+                <th>PhoneNumber</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Province</th>
+                <th>ZipCode</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+@*<script src="../../Scripts/jquery.min.js"></script>
+<script src="../../Scripts/jquery.datatable.min.js"></script>*@
+
+<script>
+    var employeeId = 0;
+    $(document).ready(function () {
+
+        GetAllEmployee();
+
+    });
+
+    function GetAllEmployee() {
+        $.ajax({
+            type: "GET",
+            url: 'https://localhost:44377/api/Employee',
+            contentType: "application/json",
+            success: OSGetAllEmployee,
+            cache: false
+        });
+    }
+    function OSGetAllEmployee(data, status) {
+        if (data.length <= 0) {
+            return;
+        }
+        var json = JSON.parse(data);
+        var html = "";
+
+        $.each(json, function (i, option) {
+            html += '<tr id="' + option.EmployeeId + '">';
+            html += '<td class="alignLeft fullName">' + option.FullName + '</td>';
+            html += '<td class="alignLeft lastName">' + option.LastName + '</td>';
+            // html += '<td class="alignLeft dob">' + option.dateOfBirth + '</td>';
+            html += '<td class="alignLeft dob">' + new Date(option.DateOfBirth).toLocaleDateString() + '</td>';
+            html += '<td class="alignLeft email">' + option.Email + '</td>';
+            html += '<td class="alignLeft phoneNumber">' + option.PhoneNumber + '</td>';
+            html += '<td class="alignLeft address">' + option.Address + '</td>';
+            html += '<td class="alignLeft city">' + option.City + '</td>';
+            html += '<td class="alignLeft province">' + option.Province + '</td>';
+            html += '<td class="alignLeft zipCode">' + option.ZipCode + '</td>';
+            html += '<td class="alignLeft"><button type="button" class="btn btn-light btn-lg" onclick="FillFields(this)">Edit</button><button type="button" class="btn btn-light btn-lg" onclick="Delete(' + option.EmployeeId + ')">Delete</button></td>';
+            html += '</tr>';
+        });
+        $('#GetAllData tbody').empty();
+        $('#GetAllData tbody').append(html);
+        $('#GetAllData').dataTable();
+    }
+    function FillFields(btn) {
+
+
+        $("html, body").animate({
+            scrollTop: 0
+        }, 100);
+
+
+        employeeId = $(btn).parents('tr').attr('id');
+        var firstName = $(btn).parents('tr').find('.fullName').text();
+        var lastName = $(btn).parents('tr').find('.lastName').text();
+        var dob = $(btn).parents('tr').find('.dob').text();
+        var email = $(btn).parents('tr').find('.email').text();
+        var phoneNumber = $(btn).parents('tr').find('.phoneNumber').text();
+        var address = $(btn).parents('tr').find('.address').text();
+        var city = $(btn).parents('tr').find('.city').text();
+        var province = $(btn).parents('tr').find('.province').text();
+        var zipCode = $(btn).parents('tr').find('.zipCode').text();
+
+
+        var fullDatestart = new Date(dob);
+        var twoDigitMonthstart = (fullDatestart.getMonth() + 1) + "";
+        if (twoDigitMonthstart.length == 1)
+            twoDigitMonthstart = "0" + twoDigitMonthstart;
+
+        var twoDigitDatestart = fullDatestart.getDate() + "";
+        if (twoDigitDatestart.length == 1)
+            twoDigitDatestart = "0" + twoDigitDatestart;
+
+        let DOBDate = fullDatestart.getFullYear() + "-" + twoDigitMonthstart + "-" + twoDigitDatestart;
+
+        $('#btnSave').text('Edit');
+        $('#FirstName').val(firstName);
+        $('#LastName').val(lastName);
+        $('#DateOfBirth').val(DOBDate);
+        $('#Email').val(email);
+        $('#PhoneNumber').val(phoneNumber);
+        $('#Address').val(address);
+        $('#City').val(city);
+        $('#Province').val(province);
+        $('#ZipCode').val(zipCode);
+    }
+    function Reset() {
+        $('#FirstName').val('');
+        $('#LastName').val('');
+        $('#DateOfBirth').val('');
+        $('#Email').val('');
+        $('#PhoneNumber').val('');
+        $('#Address').val('');
+        $('#City').val('');
+        $('#Province').val('');
+        $('#ZipCode').val('');
+        $('#btnSave').text('Save');
+    }
+    function addEdit() {
+        if (!validateControls()) {
+            return;
+        }
+
+        var firstName = $('#FirstName').val();
+        var lastName = $('#LastName').val();
+        var dob = $('#DateOfBirth').val();
+        var email = $('#Email').val();
+        var phoneNumber = $('#PhoneNumber').val();
+        var address = $('#Address').val();
+        var city = $('#City').val();
+        var province = $('#Province').val();
+        var zipCode = $('#ZipCode').val();
+        var mode = $('#btnSave').text();
+
+        var data = {
+            "EmployeeId": mode == "Save" ? 0 : parseInt(employeeId),
+            "FullName": firstName,
+            "LastName": lastName,
+            "DateOfBirth": dob,
+            "Email": email,
+            "PhoneNumber": parseInt(phoneNumber),
+            "Address": address,
+            "City": city,
+            "Province": province,
+            "ZipCode": parseInt(zipCode)
+        }
+
+        var url = mode == "Save" ? 'https://localhost:44377/api/Employee' : 'https://localhost:44377/api/Employee/' + parseInt(employeeId);
+        $.ajax({
+            type: mode == "Save" ? "POST" : "PUT",
+            url: url,
+            data: JSON.stringify(data),
+            //data: JSON.parse(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            cache: false,
+            success: function (response) {
+                alert("Data " + mode + " successfully");
+                GetAllEmployee();
+                Reset();
+            }
+        });
+
+    }
+    function Delete(id) {
+        $.ajax({
+            type: "DELETE",
+            url: 'https://localhost:44377/api/Employee/' + id,
+            contentType: "application/json",
+            cache: false,
+            success: function (response) {
+                alert("Data deleted successfully");
+                GetAllEmployee();
+                Reset();
+            },
+        });
+    }
+    function validateControls() {
+        var errors = '';
+        var isValidated = true;
+        $('.spanError').remove();
+        if ($('#FirstName').val() == '') {
+            $('#FirstName').after('<span class="spanError text-danger">FirstName is required</span>');
+            //errors += "FirstName is required <br/>";
+            isValidated = false;
+        }
+        if ($('#LastName').val() == '') {
+            $('#LastName').after('<span class="spanError text-danger">LastName is required</span>');
+            //errors += "LastName is requied <br/>";
+            isValidated = false;
+        }
+        if ($('#DateOfBirth').val() == '') {
+            $('#DateOfBirth').after('<span class="spanError text-danger">DateOfBirth is required</span>');
+            //errors += "Date Of Birth is requied <br/>";
+            isValidated = false;
+        }
+        if ($('#Email').val() == '') {
+            $('#Email').after('<span class="spanError text-danger">Email is required</span>');
+            //errors += "Email is requied <br/>";
+            isValidated = false;
+        }
+        if ($('#Address').val() == '') {
+            $('#Address').after('<span class="spanError text-danger">Address is required</span>');
+            //errors += "Address is requied <br/>";
+            isValidated = false;
+        }
+        if ($('#PhoneNumber').val() == '') {
+            $('#PhoneNumber').after('<span class="spanError text-danger">PhoneNumber is required</span>');
+            //errors += "Phone Number is requied <br/>";
+            isValidated = false;
+        }
+        if ($('#City').val() == '') {
+            $('#City').after('<span class="spanError text-danger">City is required</span>');
+            //errors += "City is requied <br/>";
+            isValidated = false;
+        }
+        if ($('#Province').val() == '') {
+            $('#Province').after('<span class="spanError text-danger">Province is required</span>');
+            //errors += "Province is requied <br/>";
+            isValidated = false;
+        }
+        if ($('#ZipCode').val() == '') {
+            $('#ZipCode').after('<span class="spanError text-danger">ZipCode is required</span>');
+            //errors += "Zip Code is requied <br/>";
+            isValidated = false;
+        }
+        //$('#errors').empty().html(errors);
+        return isValidated;
+
+    }
+
+</script>
+
+
+

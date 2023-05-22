@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\js\Employee.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="css\bootstrap-grid.css" />
+    <None Remove="css\bootstrap-grid.css.map" />
+    <None Remove="css\bootstrap-grid.min.css" />
+    <None Remove="css\bootstrap-grid.min.css.map" />
+    <None Remove="css\bootstrap-reboot.css" />
+    <None Remove="css\bootstrap-reboot.css.map" />
+    <None Remove="css\bootstrap-reboot.min.css" />
+    <None Remove="css\bootstrap-reboot.min.css.map" />
+    <None Remove="css\bootstrap.css" />
+    <None Remove="css\bootstrap.css.map" />
+    <None Remove="css\bootstrap.min.css.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\Employee.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+  </ItemGroup>
+
+</Project>

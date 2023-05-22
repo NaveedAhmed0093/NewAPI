@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\MettisDev4\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\MettisDev4\\.nuget\\packages"
+    ]
+  }
+}
